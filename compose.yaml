@@ -1,0 +1,14 @@
+services:
+  app1:
+    image: ahtoh/spring-docker-test
+    environment:
+      - APP_MESSAGE=Hello from container 1
+    ports:
+      - 9090:8090
+
+  app2:
+    image: ahtoh/spring-docker-test
+    environment:
+      - APP_MESSAGE=Hello from container 2
+    ports:
+      - 8000:8090

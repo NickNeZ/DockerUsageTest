@@ -1,0 +1,21 @@
+body {
+    padding: 0 2rem;
+    overflow: auto;
+}
+
+* {
+    font-family: "Manrope", sans-serif;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: normal;
+    margin: 10px 0px;
+}
+
+p {
+    font-size: 50px;
+    font-weight: normal;
+    color: #31dc05;
+    margin: 10px 0px;
+}
