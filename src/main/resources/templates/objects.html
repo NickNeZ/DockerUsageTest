@@ -2,33 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Bucket Files</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" >
 </head>
 
 <body>
-<h2 th:text="'Bucket: ' + ${bucketName}"></h2>
+    <div class="page">
+        <h2 th:text="'Bucket: ' + ${bucketName}"></h2>
 
-<form th:action="@{'/s3/' + ${bucketName} + '/upload'}" method="post" enctype="multipart/form-data">
-    <input type="file" name="file"/>
-    <button type="submit">Upload</button>
-</form>
+        <form style="margin-bottom: 15px" th:action="@{'/s3/' + ${bucketName} + '/upload'}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file"/>
+            <button type="submit">Upload</button>
+        </form>
 
-<table>
-    <tr><th>File</th><th>Size</th><th>Actions</th></tr>
-    <tr th:each="obj : ${objects}">
-        <td>
-            <!-- th:href="@{|https://${bucketName}.hb.ru-msk.vkcloud-storage.ru/${obj.key()}|}" -->
-            <a th:text="${obj.key()}" target="_blank"></a>
-        </td>
-        <td th:text="${obj.size()}"></td>
-        <td>
-            <form th:action="@{'/s3/' + ${bucketName} + '/delete'}" method="post" style="display:inline">
-                <input type="hidden" name="key" th:value="${obj.key()}"/>
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-</table>
+        <table>
+            <tr><th>File</th><th>Size</th><th>Actions</th></tr>
+            <tr th:each="obj : ${objects}">
+                <td>
+                    <a th:href="@{'/s3/' + ${bucketName} + '/' + ${obj.key()}}"
+                       th:text="${obj.key()}" target="_blank"></a>
+                </td>
+                <td th:text="${obj.size()}"></td>
+                <td>
+                    <form th:action="@{'/s3/' + ${bucketName} + '/delete'}" method="post" style="display:inline">
+                        <input type="hidden" name="key" th:value="${obj.key()}"/>
+                        <button class="delete-button" type="submit">Delete</button>
+                    </form>
 
-<a href="/s3/buckets">Back to buckets</a>
+                </td>
+            </tr>
+        </table>
+
+        <a href="/s3/buckets">Back to buckets</a>
+    </div>
 </body>
 </html>

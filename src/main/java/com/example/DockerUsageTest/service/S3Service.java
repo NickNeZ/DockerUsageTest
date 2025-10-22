@@ -3,6 +3,7 @@ package com.example.DockerUsageTest.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -46,10 +47,16 @@ public class S3Service {
                 .bucket(bucketName)
                 .key(key)
                 .build());
+
     }
 
-    public String getFileUrl(String bucketName, String key) {
-        return "https://" + bucketName + ".vkcloud-storage.ru/" + key;
+    public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) {
+        return s3.getObject(
+                GetObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build()
+        );
     }
 
 }
