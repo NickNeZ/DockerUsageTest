@@ -28,6 +28,11 @@
                         <button class="delete-button" type="submit">Delete</button>
                     </form>
 
+                    <form th:action="@{'/s3/' + ${bucketName} + '/' + ${obj.key()} + '/recognize'}" method="post" style="display:inline">
+                        <input type="hidden" name="key" th:value="${obj.key()}"/>
+                        <button class="button" type="submit">Recognize</button>
+                    </form>
+
                 </td>
             </tr>
         </table>

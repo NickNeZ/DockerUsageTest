@@ -1,14 +1,16 @@
 package com.example.DockerUsageTest.controllers;
 
+import com.example.DockerUsageTest.Utils.DrawUtils;
 import com.example.DockerUsageTest.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +20,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-
 
 
 @Controller
@@ -97,5 +98,64 @@ public class S3Controller {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(("Ошибка при открытии файла: " + e.getMessage()).getBytes());
         }
+    }
+
+    @PostMapping("{bucket}/{key}/recognize")
+    public String recognize(@PathVariable String bucket, @PathVariable String key) {
+        String decodedKey = URLDecoder.decode(key, StandardCharsets.UTF_8);
+        ResponseInputStream<GetObjectResponse> s3Object = s3Service.getObject(bucket, decodedKey);
+        RestTemplate restTemplate = new RestTemplate();
+        String URL = "https://smarty.mail.ru/api/v1/objects/detect?oauth_token=" + cvtoken + "&oauth_provider=mcs";
+        try{
+            ByteArrayResource fileResource = new ByteArrayResource(s3Object.readAllBytes()){
+                @Override
+                public String getFilename() {
+                    return decodedKey;
+                }
+            };
+
+            MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+            parts.add("file", fileResource);
+
+            String metaJson = """
+                {
+                  "mode": ["multiobject"],
+                  "images": [{"name": "file"}]
+                }
+                """;
+            parts.add("meta", metaJson);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+
+            HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(parts, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    URL,
+                    HttpMethod.POST,
+                    request, String.class
+            );
+            //System.out.println(response.getBody());
+
+
+            DrawUtils drawUtils = new DrawUtils();
+            byte[] drawing = drawUtils.DrawCVOver(fileResource, response.getBody());
+            MockMultipartFile file = new MockMultipartFile(
+                    "file",
+                    decodedKey.substring(0,decodedKey.lastIndexOf('.')) + "_analyzed" + ".png",
+                    "image/png",
+                    drawing
+            );
+
+            s3Service.uploadFile(bucket, file);
+
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return "redirect:/s3/" + "buckets";
     }
 }
