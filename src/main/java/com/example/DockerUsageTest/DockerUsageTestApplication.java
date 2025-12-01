@@ -7,8 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 public class DockerUsageTestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DockerUsageTestApplication.class, args);
-	}
+	public static void main(String[] args) {SpringApplication.run(DockerUsageTestApplication.class, args); }
 
 }

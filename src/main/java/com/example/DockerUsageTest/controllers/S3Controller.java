@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @Controller
 @RequestMapping("/s3")
 public class S3Controller {
-    @Value("${cvision-token}")
+    @Value("${CVISION_TOKEN}")
     private String cvtoken;
 
     @Autowired
@@ -156,6 +156,6 @@ public class S3Controller {
             throw new RuntimeException(e);
         }
 
-        return "redirect:/s3/" + "buckets";
+        return "redirect:/s3/" + bucket + "/objects";
     }
 }

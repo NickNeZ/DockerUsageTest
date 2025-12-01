@@ -14,9 +14,9 @@ import java.net.URISyntaxException;
 @Configuration
 public class StorageConfig {
 
-    @Value("${cloud.aws.credentials.access-key}")
+    @Value("${AWS_CREDENTIALS_ACCESSKEY}")
     private String accesskey;
-    @Value("${cloud.aws.credentials.secret-key}")
+    @Value("${AWS_CREDENTIALS_SECRETKEY}")
     private String secretkey;
 
     @Bean
