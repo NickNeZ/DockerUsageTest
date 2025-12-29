@@ -41,6 +41,7 @@ button{
     border-radius: 5px;
     padding: 5px 10px;
     font-size: 14px;
+    background: lightblue;
 }
 
 .delete-button{
@@ -54,12 +55,16 @@ button{
 }
 
 a:hover, button:hover{
-    color: #fdc461;
+    color: #ffffff;
     transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
     -ms-transition: all 0.3s ease-out;
     -o-transition: all 0.3s ease-out;
+}
+
+.recon:hover{
+    background: #8ab3e6;
 }
 
 table{

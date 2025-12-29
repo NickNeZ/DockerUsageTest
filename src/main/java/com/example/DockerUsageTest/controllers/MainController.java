@@ -8,13 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
-    @Value("${app.message}")
-    private String message;
 
     @GetMapping("/")
     public String Main(Model model) {
-        model.addAttribute("title", "Hello World");
-        model.addAttribute("message", message);
-        return "index";
+        return "redirect:/s3/buckets";
     }
 }
